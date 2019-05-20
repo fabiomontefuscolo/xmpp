@@ -46,13 +46,13 @@ class GroupChatCreate implements ProtocolImplementationInterface
     /**
      * GroupChatCreate constructor
      *
-     * @param string $fromJid The room owner and creator
+     * @param string $ownerJid The room owner and creator
      * @param string $roomJid The room JID
      */
-    public function __construct($fromJid, $roomJid)
+    public function __construct($ownerJid, $roomJid)
     {
-        $this->setFrom($fromJid);
-        $this->setTo($roomJid);
+        $this->setOwner($ownerJid);
+        $this->setRoom($roomJid);
     }
 
     /**
@@ -66,8 +66,8 @@ class GroupChatCreate implements ProtocolImplementationInterface
             '<presence from="%s" to="%s">'
             .   '<x xmlns="http://jabber.org/protocol/muc"/>'
             . '</presence>',
-            $this->getFrom(),
-            $this->getTo()
+            $this->getOwner(),
+            $this->getRoom()
         );
         return $invitation;
     }
@@ -77,21 +77,21 @@ class GroupChatCreate implements ProtocolImplementationInterface
      *
      * @return string
      */
-    public function getFrom()
+    public function getOwner()
     {
-        return $this->from;
+        return $this->owner;
     }
 
     /**
      * Set room creator.
      *
-     * @param string $from creator jid
+     * @param string $owner creator jid
      * 
      * @return $this  GroupChat object
      */
-    public function setFrom($from)
+    public function setOwner($owner)
     {
-        $this->from = $from;
+        $this->owner = $owner;
         return $this;
     }
 
@@ -100,21 +100,21 @@ class GroupChatCreate implements ProtocolImplementationInterface
      *
      * @return string
      */
-    public function getTo()
+    public function getRoom()
     {
-        return $this->to;
+        return $this->room;
     }
 
     /**
      * Set message receiver.
      *
-     * @param string $to the room jid to be created
+     * @param string $room the room jid to be created
      * 
      * @return $this GroupChat object
      */
-    public function setTo($to)
+    public function setRoom($room)
     {
-        $this->to = (string) $to;
+        $this->room = (string) $room;
         return $this;
     }
 
