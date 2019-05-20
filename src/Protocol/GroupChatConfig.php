@@ -162,7 +162,7 @@ class GroupChatConfig implements ProtocolImplementationInterface
             $this->_attrs[$name] = $value;
             return $this;
         }
-        throw new \Error('Attribute not allowed');
+        throw new \Error('Attribute not allowed: ' . $name);
     }
 
     /**
@@ -198,7 +198,13 @@ class GroupChatConfig implements ProtocolImplementationInterface
 
         foreach ($attrs as $key => $value) {
             $xml .= "<field var='muc#roomconfig_{$key}'>";
-            $xml .= "<value>{$value}</value>";
+            $xml .= '<value>';
+            if (is_array($value)) {
+                $xml .= implode('</value><value>', $value);
+            } else {
+                $xml .= $value;
+            }
+            $xml .= '</value>';
             $xml .= "</field>";
         }
         return $xml;
