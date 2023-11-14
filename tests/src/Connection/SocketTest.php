@@ -114,13 +114,17 @@ class SocketTest extends TestCase
      */
     public function testReceive()
     {
-        $return = '<xml xmlns="test"></xml>';
+        $return = (new XMLStream())
+            ->parse('<xml xmlns="test"></xml>')
+            ->saveXML();
+
         $mock   = $this->object->getSocket();
         $mock->expects($this->once())
             ->method('read')
             ->with($this->equalTo(4096))
             ->will($this->returnValue($return));
-        $this->assertSame($return, $this->object->receive());
+
+        $this->assertSame($return, $this->object->receive()->saveXML());
     }
 
     /**

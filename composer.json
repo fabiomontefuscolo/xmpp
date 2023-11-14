@@ -32,10 +32,11 @@
     "require-dev": {
         "behat/behat": "^2.5.5",
         "monolog/monolog": "^1.22",
-        "phpunit/phpunit": "10",
+        "phpunit/phpunit": "^8",
         "symfony/console": "^2.8",
         "symfony/dependency-injection": "^2.8",
-        "symfony/finder": "^2.8"
+        "symfony/finder": "^2.8",
+        "ext-xdebug": "*"
     },
     "suggest": {
         "psr/log-implementation": "Allows more advanced logging of the xmpp connection"

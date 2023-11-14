@@ -73,7 +73,7 @@ class LoggerTest extends TestCase
         $this->object = new Logger;
 
         $logger        = new MonologLogger('xmpp');
-        $this->handler = new TestHandler('php://memory', MonologLogger::DEBUG);
+        $this->handler = new TestHandler(MonologLogger::DEBUG);
         $logger->pushHandler($this->handler);
 
         $options = new Options;
