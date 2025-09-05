@@ -1,0 +1,60 @@
+name: PHP Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ['8.1', '8.2', '8.3', '8.4']
+        dependency-preference: ['', '--prefer-lowest']
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+        coverage: xdebug
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate --strict
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+
+    - name: Install dependencies
+      run: composer update --no-interaction --prefer-stable --prefer-dist --no-suggest --no-scripts --no-plugins ${{ matrix.dependency-preference }}
+
+    - name: Run PHPUnit tests
+      run: ./vendor/bin/phpunit --verbose --coverage-clover=build/logs/clover.xml
+
+    - name: Run Behat tests
+      run: ./vendor/bin/behat --format=progress --strict
+
+    - name: Upload coverage to Scrutinizer
+      if: ${{ success() }}
+      run: |
+        wget https://scrutinizer-ci.com/ocular.phar
+        php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
+      env:
+        SCRUTINIZER_TOKEN: ${{ secrets.SCRUTINIZER_TOKEN }}
+
+    - name: Upload coverage to Coveralls
+      if: ${{ success() }}
+      run: php vendor/bin/coveralls -v
+      env:
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
